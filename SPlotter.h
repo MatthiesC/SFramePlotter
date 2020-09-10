@@ -90,6 +90,8 @@ class SPlotter
   void SetShapeSysHists(std::vector<TObjArray*> arr){m_shapesys_arr = arr;}
   void SetLogy(Bool_t flag){bPlotLogy = flag;}
   void SetIgnoreEmptyBins(Bool_t flag){bIgnoreEmptyBins = flag;}
+  void SetSimulation(Bool_t flag){bSimulation = flag;}
+  void SetWorkInProgress(Bool_t flag){bWorkInProgress = flag;}
 
   void SetScaleSysUnc(TObjArray* arr){m_ScaleSysUncName = arr;}
   void SetSysUncWeight(TArrayF arr){m_sysweight = arr;}
@@ -135,6 +137,8 @@ class SPlotter
   bool  bPlotLogy;          // plot all plots with log y scale
   bool  bIgnoreEmptyBins;   // don't plot empty bins in the ratio
   bool  bScaleToWidth;      // normalize each bin to it's width
+  bool  bSimulation;        // write "CMS Simulation(, Work in progress)"
+  bool  bWorkInProgress;    // write "CMS Work in progress"
 
 };
 

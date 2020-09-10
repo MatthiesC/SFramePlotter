@@ -54,6 +54,8 @@ SPlotter::SPlotter()
   bPlotLogy    = false;
   bIgnoreEmptyBins = false;
   bScaleToWidth   = false;
+  bWorkInProgress = false;
+  bSimulation = false;
  
 }
 
@@ -1034,7 +1036,8 @@ vector<SHist*> SPlotter::CalcRatios(vector<SHist*> hists)
     Double_t rel_err = err / val;
     rdhist->SetBinError(ibin, rel_err * rdhist->GetBinContent(ibin) );
   }
-  rdhist->GetYaxis()->SetTitle(rd->GetProcessName() + " / BG");
+  //rdhist->GetYaxis()->SetTitle(rd->GetProcessName() + " / MC");
+  rdhist->GetYaxis()->SetTitle("Data / MC");
   if (bSingleEPS){
     SingleEPSRatioCosmetics(rdhist);
   } else {
@@ -1355,6 +1358,10 @@ void SPlotter::DrawLegend(vector<SHist*> hists)
     TLegendEntry* entry = NULL;
     int marker = sh->GetHist()->GetMarkerStyle();
     int lstyle = sh->GetHist()->GetLineStyle();
+    float weight = sh->GetWeight(); // chris
+    if (weight != 1) {
+      legtitle += " (x " + to_string(weight) + ")";
+    }
 
     if (marker>0){
       entry = leg->AddEntry(legname, legtitle, "lpe");
@@ -1387,7 +1394,7 @@ void SPlotter::DrawLegend(vector<SHist*> hists)
       //entry->SetTextColor(fSampleColors.At(i));
     }
   }
-  leg->Draw();
+  if(bDrawLegend) leg->Draw(); // chris: workaround for weird bug that single EPS will still be plotted with legend although turned off in steer file
   
 }
 
@@ -1409,7 +1416,7 @@ void SPlotter::DrawLumi()
   }
   text1->Draw();
 
-  if (bForPublication || bForPrelim){
+  if (bForPublication || bForPrelim || bSimulation || bWorkInProgress){
     TString cmstext = "CMS";
     TLatex *text2 = new TLatex(3.5, 24, cmstext);
     text2->SetNDC();
@@ -1441,6 +1448,54 @@ void SPlotter::DrawLumi()
       text3->SetY(0.78);
     }
     text3->Draw();
+  }
+  else if (bSimulation && !bWorkInProgress){
+    TString simtext = "Simulation";
+    TLatex *text4 = new TLatex(3.5, 24, simtext);
+    text4->SetNDC();
+    text4->SetTextAlign(13);
+    text4->SetX(0.24);
+    text4->SetTextFont(52);
+    if (bPlotRatio){ 
+      text4->SetTextSize(0.06);
+      text4->SetY(0.78);
+    } else {
+      text4->SetTextSize(0.035);
+      text4->SetY(0.78);
+    }
+    text4->Draw();
+  }
+  else if (!bSimulation && bWorkInProgress){
+    TString wiptext = "Work in progress";
+    TLatex *text5 = new TLatex(3.5, 24, wiptext);
+    text5->SetNDC();
+    text5->SetTextAlign(13);
+    text5->SetX(0.24);
+    text5->SetTextFont(52);
+    if (bPlotRatio){ 
+      text5->SetTextSize(0.06);
+      text5->SetY(0.78);
+    } else {
+      text5->SetTextSize(0.035);
+      text5->SetY(0.78);
+    }
+    text5->Draw();
+  }
+  else if (bSimulation && bWorkInProgress){
+    TString simwiptext = "Simulation, Work in progress";
+    TLatex *text6 = new TLatex(3.5, 24, simwiptext);
+    text6->SetNDC();
+    text6->SetTextAlign(13);
+    text6->SetX(0.24);
+    text6->SetTextFont(52);
+    if (bPlotRatio){ 
+      text6->SetTextSize(0.06);
+      text6->SetY(0.78);
+    } else {
+      text6->SetTextSize(0.035);
+      text6->SetY(0.78);
+    }
+    text6->Draw();
   }
   
 }
@@ -1527,7 +1582,7 @@ bool SPlotter::SetMinMax(vector<SHist*> hists)
     SHist* h = hists[i];
     if (h->IsStack()){ 
       if (!islog){
-	h->GetStack()->SetMinimum(0.0011);
+	h->GetStack()->SetMinimum(0.00000011);
       } else { 
 	if (min>1e-10){
 	  if (min<0.1){
@@ -1540,7 +1595,7 @@ bool SPlotter::SetMinMax(vector<SHist*> hists)
       h->GetStack()->SetMaximum(uscale*max);
     } else {
       if (!islog){ 
-	h->GetHist()->SetMinimum(0.0011);
+	h->GetHist()->SetMinimum(0.00000011);
       } else { 
 	if (min>1e-10){
 	  if (min<0.1){
@@ -1710,7 +1765,7 @@ void SPlotter::DrawPageNum()
 void SPlotter::GeneralCosmetics(TH1* hist)
 {
   // set Y-axis title
-  hist->GetYaxis()->SetTitle("Events");  
+  hist->GetYaxis()->SetTitle("Events / bin");  
   
   // set X-axis title
   hist->GetXaxis()->SetTitle(hist->GetTitle()); 
@@ -1734,8 +1789,8 @@ void SPlotter::StackCosmetics(THStack* hist)
 {
   
   // set Y-axis title
-  hist->GetYaxis()->SetTitle("Events"); 
-  hist->GetYaxis()->SetTitleOffset(1.0);  
+  hist->GetYaxis()->SetTitle("Events / bin"); 
+  hist->GetYaxis()->SetTitleOffset(1.45);
   hist->GetYaxis()->SetTitleSize(0.06);  
   
   // set X-axis title

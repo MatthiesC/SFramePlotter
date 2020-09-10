@@ -113,6 +113,8 @@ int main(int argc, char** argv)
   Bool_t ThetaFile           = steerfile->GetPlotThetaFile();
   Bool_t Logy                = steerfile->GetLogy();
   Bool_t IgnoreEmptyBins     = steerfile->GetIgnoreEmptyBins();
+  Bool_t Simulation          = steerfile->GetSimulation();
+  Bool_t WorkInProgress      = steerfile->GetWorkInProgress();
 
   TObjArray* ScaleSysUnc     = steerfile->GetScaleSysUnc();
   TArrayF  SysUncWeight      = steerfile->GetSysUncWeight();
@@ -187,6 +189,8 @@ int main(int argc, char** argv)
   pl.SetForPrelim(ForPrelim);
   pl.SetLogy(Logy);
   pl.SetIgnoreEmptyBins(IgnoreEmptyBins);
+  pl.SetSimulation(Simulation);
+  pl.SetWorkInProgress(WorkInProgress);
 
   if (ThetaFile){
     pl.SetShapeSysHists(harr_sys);

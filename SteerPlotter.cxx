@@ -30,6 +30,8 @@ SteerPlotter::SteerPlotter()
    bLogy = false;
    bZScoreInRatio = false;
    bScaleToWidth = false;
+   bSimulation = false;
+   bWorkInProgress = false;
 
 }
 
@@ -181,6 +183,12 @@ Bool_t SteerPlotter::GetForPrelim(){return bForPrelim;}
 
 void SteerPlotter::SetForPublication(Bool_t flag){bForPublication = flag;}
 Bool_t SteerPlotter::GetForPublication(){return bForPublication;}
+
+void SteerPlotter::SetSimulation(Bool_t flag){bSimulation = flag;}
+Bool_t SteerPlotter::GetSimulation(){return bSimulation;}
+
+void SteerPlotter::SetWorkInProgress(Bool_t flag){bWorkInProgress = flag;}
+Bool_t SteerPlotter::GetWorkInProgress(){return bWorkInProgress;}
 
 void SteerPlotter::SetDrawLegend(Bool_t flag){bDrawLegend = flag;}
 Bool_t SteerPlotter::GetDrawLegend(){return bDrawLegend;}
