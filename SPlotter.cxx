@@ -1630,7 +1630,7 @@ vector<SHist*> SPlotter::GetPlottableHists(std::vector<TObjArray*> histarr, int 
   TString name = hist->GetName();
   TString process = hist->GetProcessName();
   if (process.Contains("data",TString::kIgnoreCase) 
-      && name.Contains("_perlumibin", TString::kIgnoreCase)){
+      && name.Contains("_luminosity", TString::kIgnoreCase)){
     hist->SetIsYieldPlot(true);
     hists.push_back(hist);
     return hists;
